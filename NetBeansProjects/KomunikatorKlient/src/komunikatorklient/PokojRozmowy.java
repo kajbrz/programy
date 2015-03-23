@@ -1,3 +1,6 @@
+/*
+    PokojRozmowy (eng. Chat Room) display a message beetween users
+*/
 package komunikatorklient;
 
 

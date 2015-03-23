@@ -1,3 +1,8 @@
+/*
+    Class KlientPokoje (eng. Clients') Rooms contains GUI, and algorithms to connect to the host.
+    
+*/
+
 package komunikatorklient;
 
 
@@ -33,18 +38,36 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author "Kajetan Brzuszczak 209869"
  */
+
+/*
+    
+*/
 public class KlientPokoje extends javax.swing.JFrame implements Runnable
 {
-    private String NazwaUzytkownika = " ";
-    private Socket gniazdoKlienta;
+    private String NazwaUzytkownika = " "; //Name of the user
+    private Socket gniazdoKlienta;      
     private ObjectInputStream strumienOdbioru;
     private ObjectOutputStream strumienWyjscia;
     
-    private HashSet<PokojRozmowy> pokoje = new HashSet<>();
     
+    /*
+        One user can be connected to many rooms, therefore we keep those rooms
+        in HashSet.
+    */
+    
+    private HashSet<PokojRozmowy> pokoje = new HashSet<>(); 
+    
+    /*
+        polacz (eng. connect) connect to the host with given ip, and port
+        
+        @if (host has been found)
+            return true
+        @else
+            return false
+    */
     private boolean polacz(String ip, Integer port)
     {
-        gniazdoKlienta = new Socket(); //inicjalizacja gniazda bez połączenia
+        gniazdoKlienta = new Socket(); //initializing socket without connection
         try {
             gniazdoKlienta.connect(new InetSocketAddress(ip,port));
         } catch (IOException ex) {
@@ -77,11 +100,13 @@ public class KlientPokoje extends javax.swing.JFrame implements Runnable
         } catch (IOException ex) {
             //Logger.getLogger(KlientPokoje.class.getName()).log(Level.SEVERE, null, ex);
             return false;
-        }
-        
-        
+        }        
         return true;
     }
+    
+    /*
+        Sending message to the host
+    */
     public void napisz(String wiadomosc)
     {
         try {
@@ -91,6 +116,10 @@ public class KlientPokoje extends javax.swing.JFrame implements Runnable
             JOptionPane.showMessageDialog(null, "Nie można było wysłać rządania");
         }
     }
+    
+    /*
+        Disconnect host.
+    */
     private void rozlacz()
     {
         try {
@@ -125,7 +154,9 @@ public class KlientPokoje extends javax.swing.JFrame implements Runnable
         initComponents();
         
         widoczek = new WidokMapy(200, 200, "Dostępne pokoje:");
+            ///Availibe rooms
         jPanel1.add(widoczek);
+        
         
     }
 
@@ -364,6 +395,10 @@ public class KlientPokoje extends javax.swing.JFrame implements Runnable
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    
+    /*
+        Responding on message from server
+    */
     private void obslugaWiadomosc(String komenda)
     {
         System.out.println("\nSerwer: " + komenda);
@@ -372,7 +407,7 @@ public class KlientPokoje extends javax.swing.JFrame implements Runnable
         String []parametry = Arrays.copyOfRange(wiadomosc, 1, wiadomosc.length);
         switch(komend)
         {
-            case "/room":
+            case "/room": 
             {
                 room(parametry);
                 break;

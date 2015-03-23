@@ -1,4 +1,7 @@
-
+/*
+    WatekUzytkownika (eng. thread of uesr) - it is a class which handles 
+    connection beetween host and client, and receives messages from client
+*/
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,13 +22,15 @@ import java.util.logging.Logger;
  */
 class WatekUzytkownika extends Thread 
 {
-    TerminalSerweraTCP terminalSerweraTCP;
+    TerminalSerweraTCP terminalSerweraTCP; 
     
     ObjectOutputStream strumienWysylu;
     ObjectInputStream strumienOdbioru;
     
     Socket gniazdoUzytkownika;
-
+    /*
+        Creating a new WatekUzytkownika
+    */
     public WatekUzytkownika(Socket nowyUzytkownik, TerminalSerweraTCP terminalSerweraTCP, ObjectInputStream input) throws IOException 
     {
         this.terminalSerweraTCP = terminalSerweraTCP;
@@ -36,7 +41,9 @@ class WatekUzytkownika extends Thread
         this.start();
         System.out.print(" Włączono wątek odbioru danych. ");
     }
-    
+    /*
+        This method responds on commends, and depending on first
+    */
     public void ObslugaZdarzen(String komenda) throws IOException
     {
         System.out.println("Wiadomosc od użytkownika: " + komenda);
@@ -45,22 +52,22 @@ class WatekUzytkownika extends Thread
         String []parametry = Arrays.copyOfRange(wiadomosc, 1, wiadomosc.length);
         switch(komend)
         {
-            case "/newroom":
+            case "/newroom": //make a new room
             {
                 terminalSerweraTCP.utworzPokoj(this);
                 break;
             } 
-            case "/message":
+            case "/message": //send a message
             {
                 terminalSerweraTCP.message(parametry, this);
                 break;
             }
-            case "/connect":
+            case "/connect": //join to the room
             {
                 terminalSerweraTCP.connect(parametry,this);
                 break;
             }
-            case "/exit":
+            case "/exit": // exit session
             {
                 strumienOdbioru.close();
                 strumienWysylu.close();
@@ -73,13 +80,17 @@ class WatekUzytkownika extends Thread
         }
         
     }
-    
+    /*
+        Send message
+    */
     public void napisz(String wiadomosc) throws IOException
     {
         strumienWysylu.writeObject(wiadomosc);
     }
     
-    
+    /*
+        Thread where we waiting for new messages
+    */
     @Override
     public void run()
     {
